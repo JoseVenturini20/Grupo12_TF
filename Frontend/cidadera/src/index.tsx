@@ -1,17 +1,32 @@
-import React from 'react';
+import 'react-perfect-scrollbar/dist/css/styles.css';
+import 'react-draft-wysiwyg/dist/react-draft-wysiwyg.css';
+import 'react-quill/dist/quill.snow.css';
+import 'nprogress/nprogress.css';
+import './__mocks__';
+import { StrictMode } from 'react';
 import ReactDOM from 'react-dom';
-import './index.css';
+import { HelmetProvider } from 'react-helmet-async';
+import { BrowserRouter } from 'react-router-dom';
+import LocalizationProvider from '@material-ui/lab/LocalizationProvider';
+import AdapterDateFns from '@material-ui/lab/AdapterDateFns';
+import StyledEngineProvider from '@material-ui/core/StyledEngineProvider';
 import App from './App';
-import reportWebVitals from './reportWebVitals';
+import { AuthProvider } from './contexts/JWTContext';
 
 ReactDOM.render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>,
+  <StrictMode>
+    <HelmetProvider>
+      <StyledEngineProvider injectFirst>
+        <LocalizationProvider dateAdapter={AdapterDateFns}>
+            <BrowserRouter>
+              <AuthProvider>
+                <App />
+              </AuthProvider>
+            </BrowserRouter>
+        </LocalizationProvider>
+      </StyledEngineProvider>
+    </HelmetProvider>
+  </StrictMode>,
   document.getElementById('root')
 );
 
-// If you want to start measuring performance in your app, pass a function
-// to log results (for example: reportWebVitals(console.log))
-// or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
-reportWebVitals();
