@@ -13,10 +13,10 @@ export class ReclamacaoRepositorio {
             return false
         }
     }
-    static async buscarReclamacao(): Promise<Array<Reclamacao|null>>{
+    static async buscarReclamacoes(): Promise<Array<Reclamacao|null>>{
         return await ReclamacaoModel.find();
     }
-    static async buscarReclamacaoPorUsuario(usuario : String): Promise<Array<Reclamacao|null>>{
+    static async buscarReclamacoesPorUsuario(usuario : String): Promise<Array<Reclamacao|null>>{
         return await ReclamacaoModel.find({usuario: usuario});
     }
     static async editarReclamacao(id: String, reclamacao: Reclamacao): Promise<Boolean>{
