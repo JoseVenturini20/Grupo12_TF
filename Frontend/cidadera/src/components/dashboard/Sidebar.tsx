@@ -39,7 +39,7 @@ const sections = [
 const Sidebar: FC<DashboardSidebarProps> = (props) => {
   const { onMobileClose, openMobile } = props;
   const location = useLocation();
-
+  const cargo = localStorage.getItem("cargo");
   useEffect(() => {
     if (openMobile && onMobileClose) {
       onMobileClose();
@@ -94,12 +94,12 @@ const Sidebar: FC<DashboardSidebarProps> = (props) => {
                 color="textSecondary"
                 variant="body2"
               >
-                Sua conta:
+                Seu Cargo:
                 {' '}
                 <Link
                   color="primary"
                 >
-                  Administrador
+                  {cargo}
                 </Link>
               </Typography>
             </Box>

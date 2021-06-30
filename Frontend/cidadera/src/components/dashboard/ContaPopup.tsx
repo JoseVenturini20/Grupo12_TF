@@ -11,12 +11,10 @@ import {
   MenuItem,
   Popover,
 } from '@material-ui/core';
-import useAuth from '../../hooks/useAuth';
 import UserIcon from '../../icons/User';
 
 const ContaPopup: FC = () => {
   const anchorRef = useRef<HTMLButtonElement | null>(null);
-  const { user, logout } = useAuth();
   const navigate = useNavigate();
   const { enqueueSnackbar } = useSnackbar();
   const [open, setOpen] = useState<boolean>(false);
@@ -30,20 +28,9 @@ const ContaPopup: FC = () => {
   };
 
   const handleLogout = async (): Promise<void> => {
-    try {
-      handleClose();
-      await logout();
-      navigate('/');
-    } catch (err) {
-      console.error(err);
-      enqueueSnackbar({
-        anchorOrigin: {
-          horizontal: 'right',
-          vertical: 'top'
-        },
-        variant: 'error'
-      });
-    }
+    localStorage.removeItem("usuario");
+    localStorage.removeItem("cargo");
+    window.location.href = "/";
   };
 
   return (

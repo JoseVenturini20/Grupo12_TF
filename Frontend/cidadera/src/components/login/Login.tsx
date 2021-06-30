@@ -2,39 +2,33 @@ import type { FC } from 'react';
 import * as Yup from 'yup';
 import { Formik } from 'formik';
 import {
-  Alert,
   Box,
   Button,
   FormHelperText,
   TextField
 } from '@material-ui/core';
-import useAuth from '../../hooks/useAuth';
-import useIsMountedRef from '../../hooks/useIsMountedRef';
+import axios from 'axios'
 
-const LoginJWT: FC = (props) => {
-  const isMountedRef = useIsMountedRef();
-  const { login } = useAuth() as any;
-
+const Login: FC = (props) => {
   return (
     <Formik
       initialValues={{
-        email: 'demo@devias.io',
-        password: 'Password123!',
+        usuario: '',
+        senha: '',
         submit: null
       }}
       validationSchema={
         Yup
           .object()
           .shape({
-            email: Yup
-              .string()
-              .email('Must be a valid email')
-              .max(255)
-              .required('Email is required'),
-            password: Yup
+            usuario: Yup
               .string()
               .max(255)
-              .required('Password is required')
+              .required('Insira seu usuário'),
+            senha: Yup
+              .string()
+              .max(255)
+              .required('Insira sua senha')
           })
       }
       onSubmit={async (values, {
@@ -43,19 +37,24 @@ const LoginJWT: FC = (props) => {
         setSubmitting
       }): Promise<void> => {
         try {
-          await login(values.email, values.password);
+          const request = await axios.post('http://localhost:8080/login', {
+            usuario: values.usuario,
+            senha: values.senha
+          })
+          localStorage.setItem("usuario", request.data.usuario);
+          localStorage.setItem("cargo", request.data.cargo);
+          window.location.href = "/dashboard";
 
-          if (isMountedRef.current) {
-            setStatus({ success: true });
-            setSubmitting(false);
-          }
+          setStatus({ success: true });
+          setSubmitting(false);
+
         } catch (err) {
           console.error(err);
-          if (isMountedRef.current) {
-            setStatus({ success: false });
-            setErrors({ submit: err.message });
-            setSubmitting(false);
-          }
+
+          setStatus({ success: false });
+          setErrors({ submit: 'Senha incorreta'});
+          setSubmitting(false);
+
         }
       }}
     >
@@ -75,29 +74,29 @@ const LoginJWT: FC = (props) => {
         >
           <TextField
             autoFocus
-            error={Boolean(touched.email && errors.email)}
+            error={Boolean(touched.usuario && errors.usuario)}
             fullWidth
-            helperText={touched.email && errors.email}
-            label="Email Address"
+            helperText={touched.usuario && errors.usuario}
+            label="Usuário"
             margin="normal"
-            name="email"
+            name="usuario"
             onBlur={handleBlur}
             onChange={handleChange}
-            type="email"
-            value={values.email}
+            type="usuario"
+            value={values.usuario}
             variant="outlined"
           />
           <TextField
-            error={Boolean(touched.password && errors.password)}
+            error={Boolean(touched.senha && errors.senha)}
             fullWidth
-            helperText={touched.password && errors.password}
-            label="Password"
+            helperText={touched.senha && errors.senha}
+            label="Senha"
             margin="normal"
-            name="password"
+            name="senha"
             onBlur={handleBlur}
             onChange={handleChange}
             type="password"
-            value={values.password}
+            value={values.senha}
             variant="outlined"
           />
           {errors.submit && (
@@ -116,21 +115,8 @@ const LoginJWT: FC = (props) => {
               type="submit"
               variant="contained"
             >
-              Log In
+              Entrar
             </Button>
-          </Box>
-          <Box sx={{ mt: 2 }}>
-            <Alert severity="info">
-              <div>
-                Use
-                {' '}
-                <b>demo@devias.io</b>
-                {' '}
-                and password
-                {' '}
-                <b>Password123!</b>
-              </div>
-            </Alert>
           </Box>
         </form>
       )}
@@ -138,4 +124,4 @@ const LoginJWT: FC = (props) => {
   );
 };
 
-export default LoginJWT;
+export default Login;

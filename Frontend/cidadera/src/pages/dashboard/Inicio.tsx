@@ -8,11 +8,9 @@ import gtm from '../../lib/gtm';
 import type { Reclamacao } from '../../types/reclamacao';
 import ReclamacoesGerais from '../reclamacoes/ReclamacoesGerais';
 import axios from '../../lib/axios';
-import useIsMountedRef from '../../hooks/useIsMountedRef';
 
 const Inicio: FC = () => {
   const [reclamacoes, setReclamacoes] = useState<Reclamacao[]>([]);
-  const isMountedRef = useIsMountedRef();
   useEffect(() => {
     gtm.push({ event: 'page_view' });
   }, []);
@@ -21,13 +19,10 @@ const Inicio: FC = () => {
     try {
       const response = await axios.get<{ posts: Reclamacao[] }>('/api/social/feed');
 
-      if (isMountedRef.current) {
-        setReclamacoes(response.data.posts);
-      }
     } catch (err) {
       console.error(err);
     }
-  }, [isMountedRef]);
+  }, []);
 
   useEffect(() => {
     getPosts();
