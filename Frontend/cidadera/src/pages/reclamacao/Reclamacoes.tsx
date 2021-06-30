@@ -17,27 +17,26 @@ const Reclamacoes: FC = () => {
   return (
     <>
       <Helmet>
-        <title>Reclamaõesl</title>
+        <title>Reclamaões</title>
       </Helmet>
       <Box
         sx={{
           backgroundColor: 'background.default',
           minHeight: '100%',
-          py: 8
+          py: 8,
+          m:3
         }}
       >
         <Grid
           container
           spacing={3}
-          m={1}
         >
           <Grid
             alignItems="center"
             container
             justifyContent="space-between"
             spacing={3}
-            item
-
+            item  
             xs={12}
           >
             <Grid item>
@@ -61,9 +60,10 @@ const Reclamacoes: FC = () => {
               </Typography>
             </Grid>
           </Grid>
-
         </Grid>
-       <CriarReclamacao/>
+        <Box mt={2}>
+          <CriarReclamacao/>
+        </Box>
       </Box>
     </>
   );

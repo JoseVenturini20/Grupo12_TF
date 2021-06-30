@@ -30,7 +30,7 @@ const AdicionarComentarios: FC = (props) => {
         size="small"
         variant="outlined"
       />
-      <Tooltip title="Send">
+      <Tooltip title="enviar">
         <IconButton
           color={value ? 'primary' : 'default'}
           component={value ? 'button' : 'span'}

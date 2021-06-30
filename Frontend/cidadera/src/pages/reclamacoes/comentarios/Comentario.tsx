@@ -1,20 +1,17 @@
 import type { FC } from 'react';
-import PropTypes from 'prop-types';
 import {  Box, Typography } from '@material-ui/core';
 
 interface ComentarioProps {
-  authorAvatar: string;
-  authorName: string;
-  createdAt: number;
-  message: string;
+  data: string;
+  mensagem: string;
+  usuario: string;
 }
 
 const Comentario: FC<ComentarioProps> = (props) => {
   const {
-    authorAvatar,
-    authorName,
-    createdAt,
-    message,
+    data,
+    mensagem,
+    usuario,
     ...other
   } = props;
 
@@ -46,25 +43,18 @@ const Comentario: FC<ComentarioProps> = (props) => {
             color="textPrimary"
             variant="subtitle2"
           >
-            {authorName}
+            {usuario}
           </Typography>
         </Box>
         <Typography
           color="textPrimary"
           variant="body2"
         >
-          {message}
+          {mensagem}
         </Typography>
       </Box>
     </Box>
   );
-};
-
-Comentario.propTypes = {
-  authorAvatar: PropTypes.string.isRequired,
-  authorName: PropTypes.string.isRequired,
-  createdAt: PropTypes.number.isRequired,
-  message: PropTypes.string.isRequired
 };
 
 export default Comentario;

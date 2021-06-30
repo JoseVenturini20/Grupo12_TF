@@ -1,54 +1,113 @@
-import { useState } from 'react';
 import type { FC } from 'react';
-import { Lightbox } from 'react-modal-image';
-import PropTypes from 'prop-types';
 import {
   Box,
   Card,
   CardHeader,
   Divider,
-  Typography
+  Typography,
+  Avatar,
+  Button
 } from '@material-ui/core';
-import type { Comment } from '../../types/reclamacao';
+import type { Comentarios } from '../../types/reclamacao';
 import Comentario from './comentarios/Comentario';
 import AdicionarComentarios from './comentarios/AdicionarComentarios';
+import ClockIcon from '../../icons/Clock';
+import Label from '../../components/Label';
 
 interface ReclamacoesGeraisProps {
-  authorAvatar: string;
-  authorName: string;
-  comments: Comment[];
-  createdAt: number;
-  isLiked: boolean;
-  likes: number;
-  media?: string;
-  message: string;
+  titulo: string;
+  descricao: string;
+  usuario: string;
+  endereco: any;
+  id: string;
+  status: string;
+  categoria: string;
+  imagem?: string;
+  comentarios: Comentarios[];
+  data: string;
 }
 
 const ReclamacoesGerais: FC<ReclamacoesGeraisProps> = (props) => {
   const {
-    authorAvatar,
-    authorName,
-    comments,
-    createdAt,
-    isLiked: isLikedProp,
-    likes: likesProp,
-    media,
-    message,
+    titulo,
+    descricao,
+    usuario,
+    endereco,
+    id,
+    status,
+    categoria,
+    imagem,
+    comentarios,
+    data,
     ...other
   } = props;
-  const [expandMedia, setExpandMedia] = useState<boolean>(false);
+  const dataFormatada = new Date(data).toLocaleString('pt-BR', { hour12: false })
+  console.log(dataFormatada, data)
+  const getStatusLabel = (status): JSX.Element => {
+    const map = {
+      'String': {
+        text: 'String',
+        color: 'success'
+      },
+      "novoStatus": {
+        text: 'novoStatus',
+        color: 'warning'
+      },
+      'Aberta': {
+        text: 'Aberta',
+        color: 'warning'
+      },
+      "Resolvida": {
+        text: 'Resolvida',
+        color: 'success'
+      },
+    };
+    const { text, color }: any = map[status];
 
+    return (
+      <Label color={color}>
+        {text}
+      </Label>
+    );
+  };
   return (
     <>
       <Card color='secondary' {...other}>
         <CardHeader
+          avatar={(
+            <Avatar
+            />
+          )}
           disableTypography
+          subheader={(
+            <Box
+              sx={{
+                alignItems: 'center',
+                display: 'flex',
+                mt: 1
+              }}
+            >
+              <ClockIcon
+                fontSize="small"
+                sx={{ color: 'text.secondary' }}
+              />
+              <Typography
+                color="textSecondary"
+                sx={{ ml: '6px' }}
+                variant="caption"
+              >
+                {dataFormatada}
+              </Typography>
+              <Box sx={{ flexGrow: 1 }} />
+              {getStatusLabel(status)}
+            </Box>
+          )}
           title={(
             <Typography
               color="textPrimary"
               variant="subtitle2"
             >
-              {authorName}
+              {usuario}
             </Typography>
           )}
         />
@@ -58,45 +117,69 @@ const ReclamacoesGerais: FC<ReclamacoesGeraisProps> = (props) => {
             px: 3
           }}
         >
-          <Typography
-            color="textPrimary"
-            variant="body1"
-          >
-            {message}
-          </Typography>
+          <Box mb={2}>
+            <Typography
+              color="textPrimary"
+              variant="subtitle2"
+            >
+              Rua:{endereco.rua}
+            </Typography>
+            <Typography
+              color="textPrimary"
+              variant="subtitle2"
+            >
+              Bairro:{endereco.bairro}
+            </Typography>
+          </Box>
+          <Box mt={2}>
+            <Typography
+              color="textPrimary"
+              variant="h5"
+            >
+              {titulo}
+            </Typography>
+          </Box>
+          <Box mt={2}>
+            <Typography
+              color="textPrimary"
+              variant="h6"
+            >
+              {categoria}
+            </Typography>
+          </Box>
+          <Box mt={2}>
+            <Typography
+              color="textPrimary"
+              variant="body1"
+            >
+              {descricao}
+            </Typography>
+          </Box>
+          <Box mt={2}>
+            <Button
+              color="primary"
+              size="large"
+              type="submit"
+              variant="contained"
+              onClick={()=>window.open(imagem,'_blank')}
+            >
+              Imagem
+            </Button>
+          </Box>
           <Divider sx={{ my: 2 }} />
-          {comments.map((comment) => (
+          {comentarios.map((comentario) => (
             <Comentario
-              authorAvatar={comment.author.avatar}
-              authorName={comment.author.name}
-              createdAt={comment.createdAt}
-              key={comment.id}
-              message={comment.message}
+              data={comentario.data}
+              mensagem={comentario.mensagem}
+              usuario={comentario.usuario}
             />
           ))}
           <Divider sx={{ my: 2 }} />
           <AdicionarComentarios />
         </Box>
       </Card>
-      {expandMedia && (
-        <Lightbox
-          large={media}
-          onClose={(): void => setExpandMedia(false)}
-        />
-      )}
     </>
   );
-};
-
-ReclamacoesGerais.propTypes = {
-  authorAvatar: PropTypes.string.isRequired,
-  authorName: PropTypes.string.isRequired,
-  comments: PropTypes.array.isRequired,
-  createdAt: PropTypes.number.isRequired,
-  isLiked: PropTypes.bool.isRequired,
-  likes: PropTypes.number.isRequired,
-  media: PropTypes.string,
-  message: PropTypes.string
 };
 
 export default ReclamacoesGerais;

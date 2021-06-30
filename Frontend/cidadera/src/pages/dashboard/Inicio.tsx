@@ -2,12 +2,14 @@ import { useEffect, useState, useCallback } from 'react';
 import type { FC } from 'react';
 import { Helmet } from 'react-helmet-async';
 import {
-  Box
+  Box,
+  Grid,
+  Typography
 } from '@material-ui/core';
 import gtm from '../../lib/gtm';
 import type { Reclamacao } from '../../types/reclamacao';
 import ReclamacoesGerais from '../reclamacoes/ReclamacoesGerais';
-import axios from '../../lib/axios';
+import axios from 'axios';
 
 const Inicio: FC = () => {
   const [reclamacoes, setReclamacoes] = useState<Reclamacao[]>([]);
@@ -17,8 +19,10 @@ const Inicio: FC = () => {
 
   const getPosts = useCallback(async () => {
     try {
-      const response = await axios.get<{ posts: Reclamacao[] }>('/api/social/feed');
-
+      const response = await axios.get<{ reclamacoes: Reclamacao[] }>('http://localhost:8080/reclamacao/buscar');
+      console.log(response.data.reclamacoes)
+      setReclamacoes(response.data.reclamacoes)
+      console.log()
     } catch (err) {
       console.error(err);
     }
@@ -37,28 +41,47 @@ const Inicio: FC = () => {
         sx={{
           backgroundColor: 'background.default',
           minHeight: '100%',
-          py: 8
+          py: 8,
+          m: 3
         }}
       >
-        <Box m={2}>
-          {reclamacoes.map((reclamacao) => (
-            <Box
-              key={reclamacao.id}
-              sx={{ mt: 3 }}
-            >
-              <ReclamacoesGerais
-                authorAvatar={reclamacao.author.avatar}
-                authorName={reclamacao.author.name}
-                comments={reclamacao.comments}
-                createdAt={reclamacao.createdAt}
-                isLiked={reclamacao.isLiked}
-                likes={reclamacao.likes}
-                media={reclamacao.media}
-                message={reclamacao.message}
-              />
-            </Box>
-          ))}
-        </Box>
+        <Grid item>
+          <Typography
+            color="textSecondary"
+            variant="overline"
+          >
+            Reclamações
+          </Typography>
+          <Typography
+            color="textPrimary"
+            variant="h5"
+          >
+            Esse é o lugar pra tornar sua reclamação pública. Você mostra o problema, juntos cobramos a Prefeitura.
+          </Typography>
+        </Grid>
+        {reclamacoes &&
+          <Box mt={2}>
+            {reclamacoes.map((reclamacao) => (
+              <Box
+                key={reclamacao._id}
+                sx={{ mt: 3 }}
+              >
+                <ReclamacoesGerais
+                  titulo={reclamacao.titulo}
+                  descricao={reclamacao.descricao}
+                  usuario={reclamacao.usuario}
+                  endereco={reclamacao.endereco}
+                  id={reclamacao._id}
+                  status={reclamacao.status}
+                  categoria={reclamacao.categoria}
+                  imagem={reclamacao.imagem}
+                  comentarios={reclamacao.comentarios}
+                  data={reclamacao.data}
+                />
+              </Box>
+            ))}
+          </Box>
+        }
       </Box>
     </>
   );
