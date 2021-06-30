@@ -1,5 +1,4 @@
 import { FC, useState } from 'react';
-import PropTypes from 'prop-types';
 import * as Yup from 'yup';
 import { Formik } from 'formik';
 import { useSnackbar } from 'notistack';
@@ -55,18 +54,27 @@ const CriarReclamacao: FC<ReclamacoesGeraisProps> = (props) => {
     usuario,
     endereco,
     id,
-    status,
     categoria,
     imagem,
-    comentarios,
-    data,
-    ...other
+    status
   } = props;
   const classes = useStyles();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [falha, setFalha] = useState(false);
   const { enqueueSnackbar } = useSnackbar();
+  const [encerrada,setEncerrada] = useState(false);
+
+
+  function verificaStatus(status){
+    if(status === 'Encerrada'){
+      return true
+    }
+    return false
+  }
+
+
+
   return (
     <Formik
       initialValues={{
@@ -183,6 +191,7 @@ const CriarReclamacao: FC<ReclamacoesGeraisProps> = (props) => {
                 helperText={touched.titulo && errors.titulo}
                 label="Titulo"
                 name="titulo"
+                disabled={verificaStatus(status)}
                 onBlur={handleBlur}
                 onChange={handleChange}
                 value={values.titulo}
@@ -195,6 +204,7 @@ const CriarReclamacao: FC<ReclamacoesGeraisProps> = (props) => {
                   helperText={touched.descricao && errors.descricao}
                   label="Descrição"
                   name="descricao"
+                  disabled={verificaStatus(status)}
                   onBlur={handleBlur}
                   onChange={handleChange}
                   value={values.descricao}
@@ -212,6 +222,7 @@ const CriarReclamacao: FC<ReclamacoesGeraisProps> = (props) => {
                     <DatePicker
                       label='Data do ocorrido'
                       mask="__/__/____"
+                      disabled={verificaStatus(status)}
                       value={values.data}
                       onChange={(date) => setFieldValue('data', date)}
                       renderInput={(params) => <TextField {...params} />}
@@ -233,6 +244,7 @@ const CriarReclamacao: FC<ReclamacoesGeraisProps> = (props) => {
                   helperText={touched.bairro && errors.bairro}
                   label="Bairro"
                   name="bairro"
+                  disabled={verificaStatus(status)}
                   onBlur={handleBlur}
                   onChange={handleChange}
                   value={values.bairro}
@@ -247,6 +259,7 @@ const CriarReclamacao: FC<ReclamacoesGeraisProps> = (props) => {
                   label="Rua"
                   name="rua"
                   onBlur={handleBlur}
+                  disabled={verificaStatus(status)}
                   onChange={handleChange}
                   value={values.rua}
                   variant="outlined"
@@ -261,6 +274,7 @@ const CriarReclamacao: FC<ReclamacoesGeraisProps> = (props) => {
                   name="problema"
                   onBlur={handleBlur}
                   onChange={handleChange}
+                  disabled={verificaStatus(status)}
                   value={values.problema}
                   variant="outlined"
                 />
@@ -274,6 +288,7 @@ const CriarReclamacao: FC<ReclamacoesGeraisProps> = (props) => {
                   name="imagem"
                   onBlur={handleBlur}
                   onChange={handleChange}
+                  disabled={verificaStatus(status)}
                   value={values.imagem}
                   variant="outlined"
                 />
@@ -291,7 +306,7 @@ const CriarReclamacao: FC<ReclamacoesGeraisProps> = (props) => {
                   color="primary"
                   type="submit"
                   variant="contained"
-                  disabled={loading}
+                  disabled={loading||verificaStatus(status)}
                 >
                   {loading && <CircularProgress size={24} className={classes.buttonProgress} />}
                   Atualizar

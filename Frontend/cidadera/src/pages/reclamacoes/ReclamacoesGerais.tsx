@@ -12,7 +12,6 @@ import {
 import type { Comentarios } from '../../types/reclamacao';
 import Comentario from './comentarios/Comentario';
 import AdicionarComentarios from './comentarios/AdicionarComentarios';
-import { useSnackbar } from 'notistack';
 import ClockIcon from '../../icons/Clock';
 import Label from '../../components/Label';
 import axios from 'axios';
@@ -45,13 +44,16 @@ const ReclamacoesGerais: FC<ReclamacoesGeraisProps> = (props) => {
   } = props;
   const dataFormatada = new Date(data).toLocaleString('pt-BR', { hour12: false })
   const usuarioAcesso = localStorage.getItem("usuario");
-  const { enqueueSnackbar } = useSnackbar();
   const opcoes = ['Aberta','Resolvida'];
   const getStatusLabel = (status): JSX.Element => {
     const map = {
       'String': {
         text: 'String',
         color: 'success'
+      },
+      "Encerrada": {
+        text: 'Encerrada',
+        color: 'error'
       },
       "novoStatus": {
         text: 'novoStatus',
@@ -83,7 +85,6 @@ const ReclamacoesGerais: FC<ReclamacoesGeraisProps> = (props) => {
     window.location.href = "/dashboard";
   };
 
-
   return (
     <>
       <Card color='secondary' {...other}>
@@ -113,7 +114,7 @@ const ReclamacoesGerais: FC<ReclamacoesGeraisProps> = (props) => {
                 {dataFormatada}
               </Typography>
               <Box sx={{ flexGrow: 1 }} />
-              {usuario === usuarioAcesso ? (
+              {usuario === usuarioAcesso && status!=='Encerrada' ? (
                 <div>
                   <TextField
                     fullWidth
@@ -213,7 +214,7 @@ const ReclamacoesGerais: FC<ReclamacoesGeraisProps> = (props) => {
             />
           ))}
           <Divider sx={{ my: 2 }} />
-          <AdicionarComentarios id={id} />
+          <AdicionarComentarios status={status} id={id} />
         </Box>
       </Card>
     </>

@@ -11,27 +11,36 @@ import axios from 'axios';
 
 interface AddComentario {
   id: string;
+  status: string;
 }
 
 const AdicionarComentarios: FC<AddComentario> = (props) => {
   const {
-    id
+    id,
+    status
   } = props;
   const [value, setValue] = useState<string>('');
   const usuario = localStorage.getItem("usuario");
 
-  async function enviarComentario(){
+  function verificaStatus(status) {
+    if (status === 'Encerrada') {
+      return true
+    }
+    return false
+  }
+
+  async function enviarComentario() {
     console.log(value)
     await axios.put('http://localhost:8080/reclamacao/adicionarComentario', {
       id: id,
       comentario: {
-        usuario:usuario,
-        mensagem:value,
-        data:new Date()
+        usuario: usuario,
+        mensagem: value,
+        data: new Date()
       }
     })
     setValue('')
-    window.location.href='/dashboard'
+    window.location.href = '/dashboard'
   }
 
   const handleChange = (event: ChangeEvent<HTMLInputElement>): void => {
@@ -52,6 +61,7 @@ const AdicionarComentarios: FC<AddComentario> = (props) => {
         placeholder="Digite seu comentário"
         size="small"
         variant="outlined"
+        disabled={verificaStatus(status)}
         value={value}
       />
       <Tooltip title="enviar">

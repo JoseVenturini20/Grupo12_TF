@@ -26,7 +26,10 @@ const MinhasReclamacoes: FC = () => {
     } catch (err) {
       console.error(err);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+
 
   useEffect(() => {
     getPosts();
@@ -56,7 +59,7 @@ const MinhasReclamacoes: FC = () => {
             color="textPrimary"
             variant="h5"
           >
-           Atualize suas reclamações.
+            Atualize suas reclamações.
           </Typography>
         </Grid>
         {reclamacoes &&
