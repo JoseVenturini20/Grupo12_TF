@@ -1,4 +1,4 @@
-import type { FC } from 'react';
+import type { FC, ChangeEvent } from 'react';
 import {
   Box,
   Card,
@@ -6,14 +6,16 @@ import {
   Divider,
   Typography,
   Avatar,
-  Button
+  Button,
+  TextField
 } from '@material-ui/core';
 import type { Comentarios } from '../../types/reclamacao';
 import Comentario from './comentarios/Comentario';
 import AdicionarComentarios from './comentarios/AdicionarComentarios';
+import { useSnackbar } from 'notistack';
 import ClockIcon from '../../icons/Clock';
 import Label from '../../components/Label';
-
+import axios from 'axios';
 interface ReclamacoesGeraisProps {
   titulo: string;
   descricao: string;
@@ -42,7 +44,9 @@ const ReclamacoesGerais: FC<ReclamacoesGeraisProps> = (props) => {
     ...other
   } = props;
   const dataFormatada = new Date(data).toLocaleString('pt-BR', { hour12: false })
-  console.log(dataFormatada, data)
+  const usuarioAcesso = localStorage.getItem("usuario");
+  const { enqueueSnackbar } = useSnackbar();
+  const opcoes = ['Aberta','Resolvida'];
   const getStatusLabel = (status): JSX.Element => {
     const map = {
       'String': {
@@ -70,6 +74,16 @@ const ReclamacoesGerais: FC<ReclamacoesGeraisProps> = (props) => {
       </Label>
     );
   };
+
+  const handleChange = async (event: ChangeEvent<HTMLInputElement>): Promise<void> => {
+    await axios.patch('http://localhost:8080/reclamacao/editarStatus/',{
+      id:id,
+      status:event.target.value
+    });
+    window.location.href = "/dashboard";
+  };
+
+
   return (
     <>
       <Card color='secondary' {...other}>
@@ -99,7 +113,31 @@ const ReclamacoesGerais: FC<ReclamacoesGeraisProps> = (props) => {
                 {dataFormatada}
               </Typography>
               <Box sx={{ flexGrow: 1 }} />
-              {getStatusLabel(status)}
+              {usuario === usuarioAcesso ? (
+                <div>
+                  <TextField
+                    fullWidth
+                    name="option"
+                    onChange={handleChange}
+                    select
+                    SelectProps={{ native: true }}
+                    value={status}
+                    variant="outlined"
+                  >
+                    {opcoes.map((option) => (
+                      <option
+                        key={option}
+                        value={option}
+                      >
+                        {option}
+                      </option>
+                    ))}
+                  </TextField>
+                </div>
+              ) : (
+                <div>{getStatusLabel(status)}</div>
+              )}
+
             </Box>
           )}
           title={(
@@ -161,7 +199,7 @@ const ReclamacoesGerais: FC<ReclamacoesGeraisProps> = (props) => {
               size="large"
               type="submit"
               variant="contained"
-              onClick={()=>window.open(imagem,'_blank')}
+              onClick={() => window.open(imagem, '_blank')}
             >
               Imagem
             </Button>
@@ -175,7 +213,7 @@ const ReclamacoesGerais: FC<ReclamacoesGeraisProps> = (props) => {
             />
           ))}
           <Divider sx={{ my: 2 }} />
-          <AdicionarComentarios />
+          <AdicionarComentarios id={id} />
         </Box>
       </Card>
     </>
