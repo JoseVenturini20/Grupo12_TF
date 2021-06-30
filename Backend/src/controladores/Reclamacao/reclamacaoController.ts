@@ -7,6 +7,7 @@ export class ReclamacaoController {
     static async novaReclamacao(req: Request, res: Response, next: NextFunction) {
         try {
             const reclamacao = req.body as Reclamacao;
+            console.log(reclamacao)
             const resultado = await ReclamacaoRepositorio.adicionaReclamacao(reclamacao);
             if(resultado){
                 res.status(200).json({msg: "Reclamacao adicionada"});

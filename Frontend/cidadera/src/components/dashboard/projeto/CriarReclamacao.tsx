@@ -12,11 +12,13 @@ import {
   TextField,
   CircularProgress,
   createStyles,
-  makeStyles
+  makeStyles,
+  Typography
 } from '@material-ui/core';
 import DatePicker from '@material-ui/lab/DatePicker';
 import LocalizationProvider from '@material-ui/lab/LocalizationProvider';
 import AdapterDateFns from '@material-ui/lab/AdapterDateFns';
+import axios from 'axios'
 
 const useStyles = makeStyles(() =>
   createStyles({
@@ -34,6 +36,9 @@ const useStyles = makeStyles(() =>
 const CriarReclamacao: FC = () => {
   const classes = useStyles();
   const [loading, setLoading] = useState(false);
+  const usuario = localStorage.getItem("usuario");
+  const [error, setError] = useState('');
+  const [falha, setFalha] = useState(false);
   const { enqueueSnackbar } = useSnackbar();
   return (
     <Formik
@@ -88,9 +93,24 @@ const CriarReclamacao: FC = () => {
       }): Promise<void> => {
         try {
           console.log(values)
+
           setLoading(true)
+          await axios.post('http://localhost:8080/reclamacao/nova', {
+            titulo: values.titulo,
+            descricao: values.descricao,
+            data: values.data,
+            usuario: usuario,
+            endereco: {
+              bairro: values.bairro,
+              rua: values.rua
+            },
+            status: 'Aberta',
+            categoria: values.problema,
+            imagem: values.imagem
+          })
           setStatus({ success: true });
           setSubmitting(true);
+
           //setLoading(false)
           enqueueSnackbar('Reclamação enviada com sucesso', {
             anchorOrigin: {
@@ -99,13 +119,13 @@ const CriarReclamacao: FC = () => {
             },
             variant: 'success'
           });
-          setTimeout(() => {
-            window.location.href = "/dashboard";
-          }, 3000)
- 
+          window.location.href = "/dashboard";
 
         } catch (err) {
           console.error(err);
+          setFalha(true)
+          setError('Ocorreu um erro ao enviar a sua reclamação, tente novamente mais tarde')
+          setLoading(false)
           setStatus({ success: false });
           setSubmitting(false);
         }
@@ -207,7 +227,7 @@ const CriarReclamacao: FC = () => {
                   error={Boolean(touched.problema && errors.problema)}
                   fullWidth
                   helperText={touched.problema && errors.problema}
-                  label="Problema"
+                  label="Categoria"
                   name="problema"
                   onBlur={handleBlur}
                   onChange={handleChange}
@@ -236,15 +256,25 @@ const CriarReclamacao: FC = () => {
               }}
             >
               <Box sx={{ flexGrow: 1 }} />
-              <Button
-                color="primary"
-                type="submit"
-                variant="contained"
-                disabled={loading}
-              >
-                {loading && <CircularProgress size={24} className={classes.buttonProgress}/>}
-                Enviar reclamação
-              </Button>
+              <Box>
+                <Button
+                  color="primary"
+                  type="submit"
+                  variant="contained"
+                  disabled={loading}
+                >
+                  {loading && <CircularProgress size={24} className={classes.buttonProgress} />}
+                  Enviar reclamação
+                </Button>
+              </Box>
+            </Box>
+            <Box>
+              {falha &&
+                <Typography
+                  color='error'
+                >
+                  {error}
+                </Typography>}
             </Box>
           </Card>
         </form>
