@@ -7,7 +7,7 @@ import {
   Typography
 } from '@material-ui/core';
 import gtm from '../../lib/gtm';
-import CriarReclamacao from '../../components/dashboard/projeto/CriarReclamacao';
+import CriarReclamacao from '../../components/dashboard/projeto/criarReclamacao/CriarReclamacao';
 
 const Reclamacoes: FC = () => {
   useEffect(() => {

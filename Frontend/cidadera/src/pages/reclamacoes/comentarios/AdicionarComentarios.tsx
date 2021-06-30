@@ -7,9 +7,32 @@ import {
   Tooltip
 } from '@material-ui/core';
 import SendIcon from '@material-ui/icons/Send';
+import axios from 'axios';
 
-const AdicionarComentarios: FC = (props) => {
+interface AddComentario {
+  id: string;
+}
+
+const AdicionarComentarios: FC<AddComentario> = (props) => {
+  const {
+    id
+  } = props;
   const [value, setValue] = useState<string>('');
+  const usuario = localStorage.getItem("usuario");
+
+  async function enviarComentario(){
+    console.log(value)
+    await axios.put('http://localhost:8080/reclamacao/adicionarComentario', {
+      id: id,
+      comentario: {
+        usuario:usuario,
+        mensagem:value,
+        data:new Date()
+      }
+    })
+    setValue('')
+    window.location.href='/dashboard'
+  }
 
   const handleChange = (event: ChangeEvent<HTMLInputElement>): void => {
     setValue(event.target.value);
@@ -29,12 +52,14 @@ const AdicionarComentarios: FC = (props) => {
         placeholder="Digite seu comentário"
         size="small"
         variant="outlined"
+        value={value}
       />
       <Tooltip title="enviar">
         <IconButton
           color={value ? 'primary' : 'default'}
           component={value ? 'button' : 'span'}
           disabled={!value}
+          onClick={enviarComentario}
         >
           <SendIcon fontSize="small" />
         </IconButton>

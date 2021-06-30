@@ -14,6 +14,7 @@ const Loadable = (Component) => (props) => (
 const Login = Loadable(lazy(() => import('./pages/authentication/Login')));
 const Inicio = Loadable(lazy(() => import('./pages/dashboard/Inicio')));
 const Reclamacoes = Loadable(lazy(() => import('./pages/reclamacao/Reclamacoes')));
+const MinhasReclamacoes = Loadable(lazy(() => import('./pages/reclamacao/MinhasReclamacoes')));
 
 const routes: PartialRouteObject[] = [
   {
@@ -47,6 +48,10 @@ const routes: PartialRouteObject[] = [
       {
         path: '/reclamacoes',
         element: <Reclamacoes />
+      },
+      {
+        path: '/editar-reclamacoes',
+        element: <MinhasReclamacoes />
       },
     ]
   }

@@ -1,5 +1,9 @@
 import type { FC } from 'react';
-import {  Box, Typography } from '@material-ui/core';
+import {
+  Box,
+  Typography,
+  Avatar
+} from '@material-ui/core';
 
 interface ComentarioProps {
   data: string;
@@ -23,6 +27,8 @@ const Comentario: FC<ComentarioProps> = (props) => {
       }}
       {...other}
     >
+      <Avatar
+      />
       <Box
         sx={{
           backgroundColor: 'background.default',
@@ -44,6 +50,13 @@ const Comentario: FC<ComentarioProps> = (props) => {
             variant="subtitle2"
           >
             {usuario}
+          </Typography>
+          <Box sx={{ flexGrow: 1 }} />
+          <Typography
+            color="textSecondary"
+            variant="caption"
+          >
+            {new Date(data).toLocaleString('pt-BR', { hour12: false })}
           </Typography>
         </Box>
         <Typography

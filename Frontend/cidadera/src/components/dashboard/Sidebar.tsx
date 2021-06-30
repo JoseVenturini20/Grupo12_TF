@@ -31,6 +31,10 @@ const sections = [
       {
         title: 'Reclamações',
         path: '/dashboard/reclamacoes'
+      },
+      {
+        title: 'Editar minhas Reclamações',
+        path: '/dashboard/editar-reclamacoes'
       }
     ]
   }
