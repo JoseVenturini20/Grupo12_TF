@@ -20,35 +20,41 @@ interface DashboardSidebarProps {
   openMobile: boolean;
 }
 
-const sections = [
-  {
-    title: 'Geral',
-    items: [
-      {
-        title: 'Inicio',
-        path: '/dashboard'
-      },
-      {
-        title: 'Reclamações',
-        path: '/dashboard/reclamacoes'
-      },
-      {
-        title: 'Editar minhas Reclamações',
-        path: '/dashboard/editar-reclamacoes'
-      }
-    ]
-  }
-];
+
 
 const Sidebar: FC<DashboardSidebarProps> = (props) => {
   const { onMobileClose, openMobile } = props;
   const location = useLocation();
   const cargo = localStorage.getItem("cargo");
+
+  const sections = [
+    {
+      title: 'Geral',
+      items: [
+        {
+          title: 'Inicio',
+          path: '/dashboard'
+        },
+        cargo === 'normal'
+        &&
+        {
+          title: 'Criar uma Reclamação',
+          path: '/dashboard/reclamacoes'
+        },
+        cargo === 'normal'
+        &&
+        {
+          title: 'Editar minhas Reclamações',
+          path: '/dashboard/editar-reclamacoes'
+        }
+      ]
+    }
+  ];
   useEffect(() => {
     if (openMobile && onMobileClose) {
       onMobileClose();
     }
-      // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [location.pathname]);
 
   const content = (

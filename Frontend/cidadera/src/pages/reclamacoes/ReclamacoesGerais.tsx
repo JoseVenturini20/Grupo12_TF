@@ -44,7 +44,14 @@ const ReclamacoesGerais: FC<ReclamacoesGeraisProps> = (props) => {
   } = props;
   const dataFormatada = new Date(data).toLocaleString('pt-BR', { hour12: false })
   const usuarioAcesso = localStorage.getItem("usuario");
-  const opcoes = ['Aberta','Resolvida'];
+  const cargo = localStorage.getItem("cargo");
+  let opcoes=[]
+  if(cargo==='oficial'){
+    opcoes.push('Encerrada',status)
+  }else{
+    opcoes.push('Aberta','Resolvida')
+  }
+
   const getStatusLabel = (status): JSX.Element => {
     const map = {
       'String': {
@@ -114,7 +121,7 @@ const ReclamacoesGerais: FC<ReclamacoesGeraisProps> = (props) => {
                 {dataFormatada}
               </Typography>
               <Box sx={{ flexGrow: 1 }} />
-              {usuario === usuarioAcesso && status!=='Encerrada' ? (
+              {(usuario === usuarioAcesso || cargo==='oficial') && status!=='Encerrada'  ? (
                 <div>
                   <TextField
                     fullWidth
