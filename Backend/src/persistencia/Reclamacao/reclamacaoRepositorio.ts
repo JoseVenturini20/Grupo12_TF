@@ -96,18 +96,18 @@ export class ReclamacaoRepositorio {
         await Promise.all(categoria.map(async c => {
            const count =  await ReclamacaoModel.count({categoria: c});
            reclamacoesPorCategoria[c] = count;
-           reclamacoes.forEach(r => {
+           reclamacoes.forEach((r:any) => {
                if(r.categoria === c){
-                    comentarioPorCategoria[c] = comentarioPorCategoria[c] + r.comentarios?.length;
+                    comentarioPorCategoria[c] = comentarioPorCategoria[c] + r.comentarios.length;
                }
            })
         }));
         await Promise.all(bairro.map(async b => {
             const count =  await ReclamacaoModel.count({'endereco.bairro': b});
             reclamacoesPorBairro[b] = count;
-            reclamacoes.forEach(r => {
+            reclamacoes.forEach((r : any) => {
                 if(r.endereco.bairro === b){
-                    comentarioPorBairro[b] = comentarioPorBairro[b] + r.comentarios?.length;
+                    comentarioPorBairro[b] = comentarioPorBairro[b] + r.comentarios.length;
                 }
             })
          }));
@@ -198,7 +198,8 @@ export class ReclamacaoRepositorio {
 
         const usuarios = await UsuarioModel.find();
         const usuariosOficiais : any = [];
-        usuarios.forEach(u => {
+        usuarios.forEach(u => 
+        {
             if(u.cargo == 'oficial'){
                 usuariosOficiais.push(u.usuario)
             }
