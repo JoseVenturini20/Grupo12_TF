@@ -5,44 +5,28 @@ import { ReclamacaoRepositorio } from '../../persistencia/Reclamacao/reclamacaoR
 
 export class ReclamacaoController {
     static async novaReclamacao(req: Request, res: Response, next: NextFunction) {
-        try {
             const reclamacao = req.body as Reclamacao;
-            console.log(reclamacao)
             const resultado = await ReclamacaoRepositorio.adicionaReclamacao(reclamacao);
             if(resultado){
                 res.status(200).json({msg: "Reclamacao adicionada"});
             }else {
                 res.status(400).json({msg: "Falha ao adicionar reclamacao"});
             }
-        } catch(err) {
-            console.log(err);
-            next(err);
-        }
     }
 
     static async buscarReclamacoes(req: Request, res: Response, next: NextFunction) {
-        try {
-            const resultado = await ReclamacaoRepositorio.buscarReclamacoes();
-            if(resultado){
-                res.status(200).json({reclamacoes:resultado});
-            }else {
-                res.status(500).json({msg: "Falha ao buscar reclamacoes"});
-            }
-        } catch(err) {
-            console.log(err);
-            next(err);
-        }
+        const resultado = await ReclamacaoRepositorio.buscarReclamacoes();
+        res.status(200).json({reclamacoes:resultado});
     }
 
     static async buscarReclamacoesPorUsuario(req: Request, res: Response, next: NextFunction) {
         try {
             const usuario = req.params.usuario
-            const resultado = await ReclamacaoRepositorio.buscarReclamacoesPorUsuario(usuario);
-            if(resultado){
-                res.status(200).json({reclamacoes:resultado});
-            }else {
-                res.status(500).json({msg: "Falha ao buscar reclamacoes"});
+            if(!usuario){
+                throw Error("usuario é obrigatorios")
             }
+            const resultado = await ReclamacaoRepositorio.buscarReclamacoesPorUsuario(usuario);
+            res.status(200).json({reclamacoes:resultado});
         } catch(err) {
             console.log(err);
             next(err);
@@ -52,6 +36,9 @@ export class ReclamacaoController {
         try {
             const reclamacao = req.body.reclamacao as Reclamacao;
             const id = req.body.id;
+            if(!reclamacao || !id){
+                throw Error("reclamacao e id são obrigatorios")
+            }
             const resultado = await ReclamacaoRepositorio.editarReclamacao(id, reclamacao);
             if(resultado){
                 res.status(200).json({msg: "Reclamacao editada"});
@@ -67,6 +54,9 @@ export class ReclamacaoController {
         try {
             const status = req.body.status;
             const id = req.body.id;
+            if(!status || !id){
+                throw Error("status e id são obrigatorios")
+            }
             const resultado = await ReclamacaoRepositorio.editarStatus(id, status);
             if(resultado){
                 res.status(200).json({msg: "Status editado"});
@@ -83,6 +73,9 @@ export class ReclamacaoController {
         try {
             const comentario = req.body.comentario as Comentario;
             const id = req.body.id;
+            if(!comentario || !id){
+                throw Error("comentario e id são obrigatorios")
+            }
             const resultado = await ReclamacaoRepositorio.adicionaComentario(id, comentario);
             if(resultado){
                 res.status(200).json({msg: "Comentario adicionado"});
@@ -93,5 +86,18 @@ export class ReclamacaoController {
             console.log(err);
             next(err);
         }
+    }
+    static async informacoesGerenciais(req: Request, res: Response, next: NextFunction) {
+        const totalReclamacao = await ReclamacaoRepositorio.totalReclamacao();
+        const numeroMedioComentario = await ReclamacaoRepositorio.numeroMedioComentario();
+        const percentualStatus = await ReclamacaoRepositorio.percentualStatus();
+        const percentualRespondidaOrgaoOficial = await ReclamacaoRepositorio.percentualRespondidaOrgaoOficial();
+        const objetoResponse = {
+            totalReclamacao,
+            numeroMedioComentario,
+            percentualStatus,
+            percentualRespondidaOrgaoOficial
+        }
+        res.status(200).json(objetoResponse);
     }
 }

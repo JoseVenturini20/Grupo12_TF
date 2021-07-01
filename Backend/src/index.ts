@@ -1,26 +1,15 @@
 import express from "express";
-import cors from "cors";
-import { routerReclamacao } from './controladores/Reclamacao/reclamacaoRota'
-import { routerLogin } from './controladores/Login/loginRota'
-
-import { ReclamacaoRepositorio } from "./persistencia/Reclamacao/reclamacaoRepositorio";
-import { json } from 'body-parser';
-
-const app = express();
+import app from './app'
 import { connect } from "mongoose";
+import { ReclamacaoRepositorio } from './persistencia/Reclamacao/reclamacaoRepositorio';
 (async () => {
   try {
-    app.set("port", 8080);
-    app.use(cors());
-    app.use(json());
-    app.use(routerReclamacao);
-    app.use(routerLogin)
-    const dbAtlas =
-      "mongodb+srv://tf:josealex@cluster0.zapmq.mongodb.net/myFirstDatabase?retryWrites=true&w=majority";
+    const dbAtlas = "mongodb+srv://tf:josealex@cluster0.zapmq.mongodb.net/myFirstDatabase?retryWrites=true&w=majority";
     await connect(dbAtlas, { useNewUrlParser: true });
     app.listen(8080, () => {
       console.log("on: 8080");
     });
+    await ReclamacaoRepositorio.percentualRespondidaOrgaoOficial()
   } catch (e) {
     console.log(e);
   }

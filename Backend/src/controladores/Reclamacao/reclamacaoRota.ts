@@ -10,6 +10,7 @@ routerReclamacao.get(`${path}/buscarPorUsuario/:usuario`, ReclamacaoController.b
 routerReclamacao.patch(`${path}/editar`, ReclamacaoController.editarReclamacao);
 routerReclamacao.patch(`${path}/editarStatus`, ReclamacaoController.editarStatus);
 routerReclamacao.put(`${path}/adicionarComentario`, ReclamacaoController.adicionaComentario);
+routerReclamacao.get(`${path}/informacoesGerenciais`, ReclamacaoController.informacoesGerenciais);
 
 
 
