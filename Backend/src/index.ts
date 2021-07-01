@@ -9,7 +9,6 @@ import { ReclamacaoRepositorio } from './persistencia/Reclamacao/reclamacaoRepos
     app.listen(8080, () => {
       console.log("on: 8080");
     });
-    await ReclamacaoRepositorio.percentualRespondidaOrgaoOficial()
   } catch (e) {
     console.log(e);
   }

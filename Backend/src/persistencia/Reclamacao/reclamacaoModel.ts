@@ -44,8 +44,7 @@ export const ReclamacaoModel: Model<ReclamacaoDocument> =
         required: true,
       },
       imagem: {
-        type: String,
-        required: true,
+        type: String
       },
       comentarios: {
           type: Array,
