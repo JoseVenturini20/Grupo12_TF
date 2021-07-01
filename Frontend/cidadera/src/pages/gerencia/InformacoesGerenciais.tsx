@@ -12,62 +12,53 @@ import CardInformacoes from 'src/components/dashboard/projeto/gerencia/CardInfor
 import React from 'react';
 
 const InformacoesGerenciais: FC = () => {
- const [totalReclamacoesBairro,setTotalReclamacoesBairro] = useState({});
- const [totalReclamacoesCategoria,setTotalReclamacoesCategoria] = useState({});
+ const [loading, setLoading] = useState(false)
 
- const [mediaComentariosCategoria,setMediaComentariosCategoria] = useState({});
- const [mediaComentariosBairro,setMediaComentariosBairro] = useState({});
+ const [totalReclamacoesBairro, setTotalReclamacoesBairro] = useState({});
+ const [totalReclamacoesCategoria, setTotalReclamacoesCategoria] = useState({});
 
- const [reclamacoesBairroResolvida,setReclamacoesBairroResolvida] = useState({});
- const [reclamacoesBairroEncerrada,setReclamacoesBairroEncerrada] = useState({});
- const [reclamacoesCategoriaResolvida,setReclamacoesCategoriaResolvida] = useState({});
- const [reclamacoesCategoriaEncerrada,setReclamacoesCategoriaEncerrada] = useState({});
+ const [mediaComentariosCategoria, setMediaComentariosCategoria] = useState({});
+ const [mediaComentariosBairro, setMediaComentariosBairro] = useState({});
 
- const [reclamacaoRespondidaOficial,setReclamacaoRespondidaOficial] = useState({});
- const [reclamacaoEncerradaOficial,setReclamacaoEncerradaOficial] = useState({});
- 
+ const [reclamacoesBairroResolvida, setReclamacoesBairroResolvida] = useState({});
+ const [reclamacoesBairroEncerrada, setReclamacoesBairroEncerrada] = useState({});
+ const [reclamacoesCategoriaResolvida, setReclamacoesCategoriaResolvida] = useState();
+ const [reclamacoesCategoriaEncerrada, setReclamacoesCategoriaEncerrada] = useState({});
+
+ const [reclamacaoRespondidaOficial, setReclamacaoRespondidaOficial] = useState({ respondida: 0, encerrada: 0 });
+
  useEffect(() => {
   gtm.push({ event: 'page_view' });
  }, []);
 
- const object1 = {
-  a: 'somestring',
-  b: 42,
-  c: 52,
-  d: 10,
-  h: 11
- };
+ function formatarValorPercentual(valor) {
 
-
- const object2 = {
-  a: 'somestring',
-  b: 42
- };
-
- function formatarValorPercentual(valor){
-  if(valor === 0){
-   return '0%'
-  }else{
-   return valor.toFixed(2)+'%'
+  if (valor === 0 || valor === null) {
+   return 0
+  } else {
+   return valor.toFixed(2)
   }
  }
 
  const getPosts = useCallback(async () => {
   try {
-   const response = await axios.get('http://localhost:8080/reclamacao/buscar');
-   setTotalReclamacoesBairro({})
-   setTotalReclamacoesCategoria({})
+   setLoading(false)
+   const response = await axios.get('http://localhost:8080/reclamacao/informacoesGerenciais');
+   console.log(response.data)
+   setTotalReclamacoesBairro(response?.data?.totalReclamacao?.bairro)
+   setTotalReclamacoesCategoria(response?.data?.totalReclamacao?.categoria)
 
-   setMediaComentariosCategoria({})
-   setMediaComentariosBairro({})
-  
-  setReclamacoesBairroResolvida({})
-  setReclamacoesBairroEncerrada({})
-  setReclamacoesCategoriaResolvida({})
-  setReclamacoesCategoriaEncerrada({})
-  
-  setReclamacaoRespondidaOficial({})
-  setReclamacaoEncerradaOficial({})
+   setMediaComentariosCategoria(response?.data?.numeroMedioComentario?.categoria)
+   setMediaComentariosBairro(response?.data?.numeroMedioComentario?.bairro)
+
+   setReclamacoesBairroResolvida(response?.data?.percentualStatus?.bairro?.resolvida)
+   setReclamacoesBairroEncerrada(response?.data?.percentualStatus?.bairro?.encerrada)
+   setReclamacoesCategoriaResolvida(response?.data?.percentualStatus?.categoria?.resolvida)
+   setReclamacoesCategoriaEncerrada(response?.data?.percentualStatus?.categoria?.encerrada)
+
+   setReclamacaoRespondidaOficial({ respondida: response?.data?.percentualRespondidaOrgaoOficial?.respondida, encerrada: response?.data?.percentualRespondidaOrgaoOficial?.encerrada })
+
+   setLoading(true)
   } catch (err) {
    console.error(err);
   }
@@ -76,6 +67,11 @@ const InformacoesGerenciais: FC = () => {
  useEffect(() => {
   getPosts();
  }, [getPosts]);
+
+
+ useEffect(() => {
+  console.log('----',Object.keys(reclamacoesBairroResolvida).length!==0)
+ }, [reclamacoesBairroResolvida]);
 
  return (
   <>
@@ -115,34 +111,37 @@ const InformacoesGerenciais: FC = () => {
         Informações sobre as reclamações
        </Typography>
       </Grid>
-      <Grid
-       item
-       lg={12}
-       sm={12}
-       xs={12}
-      >
-       <Box mt={2} mb={2} textAlign='center'>
-        <Typography
-         color="textSecondary"
-         variant="h5"
-        >
-         Total de reclamações por bairro
-        </Typography>
-       </Box>
-      </Grid>
-      {Object.entries(object1).map(([key, val]) =>
-       <React.Fragment>
-        <Grid
-         item
-         lg={3}
-         sm={6}
-         xs={12}
-        >
-         <CardInformacoes loading={true} informacao={key} valor={val} />
-        </Grid>
-       </React.Fragment>
-      )}
-            <Grid
+
+      {loading&&Object.keys(totalReclamacoesBairro).length!==0&&
+      <React.Fragment>
+       <Grid
+        item
+        lg={12}
+        sm={12}
+        xs={12}
+       >
+        <Box mt={2} mb={2} textAlign='center'>
+         <Typography
+          color="textSecondary"
+          variant="h5"
+         >
+          Total de reclamações por bairro
+         </Typography>
+        </Box>
+       </Grid>
+       {Object.entries(totalReclamacoesBairro).map(([key, val]) =>
+        <React.Fragment>
+         <Grid
+          item
+          lg={3}
+          sm={6}
+          xs={12}
+         >
+          <CardInformacoes loading={loading} informacao={key} valor={val} />
+         </Grid>
+        </React.Fragment>
+       )}</React.Fragment>}
+      {loading&&Object.keys(totalReclamacoesCategoria).length!==0&&<React.Fragment><Grid
        item
        lg={12}
        sm={12}
@@ -157,19 +156,19 @@ const InformacoesGerenciais: FC = () => {
         </Typography>
        </Box>
       </Grid>
-      {Object.entries(object1).map(([key, val]) =>
-       <React.Fragment>
-        <Grid
-         item
-         lg={3}
-         sm={6}
-         xs={12}
-        >
-         <CardInformacoes loading={true} informacao={key} valor={val} />
-        </Grid>
-       </React.Fragment>
-      )}
-      <Grid
+       {Object.entries(totalReclamacoesCategoria).map(([key, val]) =>
+        <React.Fragment>
+         <Grid
+          item
+          lg={3}
+          sm={6}
+          xs={12}
+         >
+          <CardInformacoes loading={loading} informacao={key} valor={val} />
+         </Grid>
+        </React.Fragment>
+       )}</React.Fragment>}
+      {loading&&Object.keys(mediaComentariosCategoria).length!==0&&Object.keys(reclamacoesBairroResolvida).length!==0&&<React.Fragment><Grid
        item
        lg={12}
        sm={12}
@@ -184,19 +183,19 @@ const InformacoesGerenciais: FC = () => {
         </Typography>
        </Box>
       </Grid>
-      {Object.entries(object2).map(([key, val]) =>
-       <React.Fragment>
-        <Grid
-         item
-         lg={3}
-         sm={6}
-         xs={12}
-        >
-         <CardInformacoes loading={true} informacao={key} valor={val} />
-        </Grid>
-       </React.Fragment>
-      )}
-      <Grid
+       {Object.entries(mediaComentariosCategoria).map(([key, val]) =>
+        <React.Fragment>
+         <Grid
+          item
+          lg={3}
+          sm={6}
+          xs={12}
+         >
+          <CardInformacoes loading={loading} informacao={key} valor={formatarValorPercentual(val)} />
+         </Grid>
+        </React.Fragment>
+       )}</React.Fragment>}
+      {loading&&Object.keys(mediaComentariosBairro).length!==0&&<React.Fragment><Grid
        item
        lg={12}
        sm={12}
@@ -211,19 +210,19 @@ const InformacoesGerenciais: FC = () => {
         </Typography>
        </Box>
       </Grid>
-      {Object.entries(object2).map(([key, val]) =>
-       <React.Fragment>
-        <Grid
-         item
-         lg={3}
-         sm={6}
-         xs={12}
-        >
-         <CardInformacoes loading={true} informacao={key} valor={val} />
-        </Grid>
-       </React.Fragment>
-      )}
-      <Grid
+       {Object.entries(mediaComentariosBairro).map(([key, val]) =>
+        <React.Fragment>
+         <Grid
+          item
+          lg={3}
+          sm={6}
+          xs={12}
+         >
+          <CardInformacoes loading={loading} informacao={key} valor={formatarValorPercentual(val)} />
+         </Grid>
+        </React.Fragment>
+       )}</React.Fragment>}
+      {loading&&Object.keys(reclamacoesBairroResolvida).length!==0&&<React.Fragment><Grid
        item
        lg={12}
        sm={12}
@@ -238,19 +237,19 @@ const InformacoesGerenciais: FC = () => {
         </Typography>
        </Box>
       </Grid>
-      {Object.entries(object1).map(([key, val]) =>
-       <React.Fragment>
-        <Grid
-         item
-         lg={3}
-         sm={6}
-         xs={12}
-        >
-         <CardInformacoes loading={true} informacao={key} valor={val + "%"} />
-        </Grid>
-       </React.Fragment>
-      )}
-            <Grid
+       {Object.entries(reclamacoesBairroResolvida).map(([key, val]) =>
+        <React.Fragment>
+         <Grid
+          item
+          lg={3}
+          sm={6}
+          xs={12}
+         >
+          <CardInformacoes loading={loading} informacao={key} valor={formatarValorPercentual(val) + '%'} />
+         </Grid>
+        </React.Fragment>
+       )}</React.Fragment>}
+      {loading&&Object.keys(reclamacoesBairroEncerrada).length!==0&&<React.Fragment><Grid
        item
        lg={12}
        sm={12}
@@ -265,19 +264,19 @@ const InformacoesGerenciais: FC = () => {
         </Typography>
        </Box>
       </Grid>
-      {Object.entries(object1).map(([key, val]) =>
-       <React.Fragment>
-        <Grid
-         item
-         lg={3}
-         sm={6}
-         xs={12}
-        >
-         <CardInformacoes loading={true} informacao={key} valor={val + "%"} />
-        </Grid>
-       </React.Fragment>
-      )}
-      <Grid
+       {Object.entries(reclamacoesBairroEncerrada).map(([key, val]) =>
+        <React.Fragment>
+         <Grid
+          item
+          lg={3}
+          sm={6}
+          xs={12}
+         >
+          <CardInformacoes loading={loading} informacao={key} valor={formatarValorPercentual(val) + '%'} />
+         </Grid>
+        </React.Fragment>
+       )}</React.Fragment>}
+      {loading&&Object.keys(reclamacoesCategoriaEncerrada).length!==0&&<React.Fragment><Grid
        item
        lg={12}
        sm={12}
@@ -292,19 +291,19 @@ const InformacoesGerenciais: FC = () => {
         </Typography>
        </Box>
       </Grid>
-      {Object.entries(object1).map(([key, val]) =>
-       <React.Fragment>
-        <Grid
-         item
-         lg={3}
-         sm={6}
-         xs={12}
-        >
-         <CardInformacoes loading={true} informacao={key} valor={val + "%"} />
-        </Grid>
-       </React.Fragment>
-      )}
-            <Grid
+       {Object.entries(reclamacoesCategoriaEncerrada).map(([key, val]) =>
+        <React.Fragment>
+         <Grid
+          item
+          lg={3}
+          sm={6}
+          xs={12}
+         >
+          <CardInformacoes loading={loading} informacao={key} valor={formatarValorPercentual(val) + '%'} />
+         </Grid>
+        </React.Fragment>
+       )}</React.Fragment>}
+      {loading&&Object.keys(reclamacoesCategoriaResolvida).length!==0&&<React.Fragment><Grid
        item
        lg={12}
        sm={12}
@@ -319,72 +318,46 @@ const InformacoesGerenciais: FC = () => {
         </Typography>
        </Box>
       </Grid>
-      {Object.entries(object1).map(([key, val]) =>
-       <React.Fragment>
-        <Grid
-         item
-         lg={3}
-         sm={6}
-         xs={12}
-        >
-         <CardInformacoes loading={true} informacao={key} valor={val + "%"} />
-        </Grid>
-       </React.Fragment>
-      )}
-      <Grid
-       item
-       lg={12}
-       sm={12}
-       xs={12}
-      >
-       <Box mt={2} mb={2} textAlign='center'>
-        <Typography
-         color="textSecondary"
-         variant="h5"
-        >
-         Reclamações respondidas por órgãos oficiais
-        </Typography>
-       </Box>
-      </Grid>
-      {Object.entries(object1).map(([key, val]) =>
-       <React.Fragment>
-        <Grid
-         item
-         lg={3}
-         sm={6}
-         xs={12}
-        >
-         <CardInformacoes loading={true} informacao={key} valor={val + "%"} />
-        </Grid>
-       </React.Fragment>
-      )}
-            <Grid
-       item
-       lg={12}
-       sm={12}
-       xs={12}
-      >
-       <Box mt={2} mb={2} textAlign='center'>
-        <Typography
-         color="textSecondary"
-         variant="h5"
-        >
-         Reclamações encerradas por órgãos oficiais
-        </Typography>
-       </Box>
-      </Grid>
-      {Object.entries(object1).map(([key, val]) =>
-       <React.Fragment>
-        <Grid
-         item
-         lg={3}
-         sm={6}
-         xs={12}
-        >
-         <CardInformacoes loading={true} informacao={key} valor={val + "%"} />
-        </Grid>
-       </React.Fragment>
-      )}
+       {Object.entries(reclamacoesCategoriaResolvida).map(([key, val]) =>
+        <React.Fragment>
+         <Grid
+          item
+          lg={3}
+          sm={6}
+          xs={12}
+         >
+          <CardInformacoes loading={loading} informacao={key} valor={formatarValorPercentual(val) + '%'} />
+         </Grid>
+        </React.Fragment>
+       )}</React.Fragment>}
+      {loading&&Object.keys(reclamacaoRespondidaOficial).length!==0&&<React.Fragment>
+       <Grid
+        item
+        lg={12}
+        sm={12}
+        xs={12}
+       >
+        <Box mt={2} mb={2} textAlign='center'>
+         <Typography
+          color="textSecondary"
+          variant="h5"
+         >
+          Reclamações respondidas e comentadas por órgãos oficiais
+         </Typography>
+        </Box>
+       </Grid>
+       {Object.entries(reclamacaoRespondidaOficial).map(([key, val]) =>
+        <React.Fragment>
+         <Grid
+          item
+          lg={3}
+          sm={6}
+          xs={12}
+         >
+          <CardInformacoes loading={loading} informacao={key} valor={formatarValorPercentual(val) + '%'} />
+         </Grid>
+        </React.Fragment>
+       )}</React.Fragment>}
      </Grid>
     </Grid>
    </Box>
