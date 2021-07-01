@@ -20,9 +20,7 @@ const Inicio: FC = () => {
   const getPosts = useCallback(async () => {
     try {
       const response = await axios.get<{ reclamacoes: Reclamacao[] }>('http://localhost:8080/reclamacao/buscar');
-      console.log(response.data.reclamacoes)
       setReclamacoes(response.data.reclamacoes)
-      console.log()
     } catch (err) {
       console.error(err);
     }

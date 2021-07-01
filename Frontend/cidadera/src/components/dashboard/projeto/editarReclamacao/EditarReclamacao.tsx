@@ -47,7 +47,7 @@ interface ReclamacoesGeraisProps {
   data: string;
 }
 
-const CriarReclamacao: FC<ReclamacoesGeraisProps> = (props) => {
+const EditarReclamacao: FC<ReclamacoesGeraisProps> = (props) => {
   const {
     titulo,
     descricao,
@@ -63,8 +63,6 @@ const CriarReclamacao: FC<ReclamacoesGeraisProps> = (props) => {
   const [error, setError] = useState('');
   const [falha, setFalha] = useState(false);
   const { enqueueSnackbar } = useSnackbar();
-  const [encerrada,setEncerrada] = useState(false);
-
 
   function verificaStatus(status){
     if(status === 'Encerrada'){
@@ -72,8 +70,6 @@ const CriarReclamacao: FC<ReclamacoesGeraisProps> = (props) => {
     }
     return false
   }
-
-
 
   return (
     <Formik
@@ -127,8 +123,6 @@ const CriarReclamacao: FC<ReclamacoesGeraisProps> = (props) => {
         setSubmitting
       }): Promise<void> => {
         try {
-          console.log(values)
-
           setLoading(true)
           await axios.patch('http://localhost:8080/reclamacao/editar', {
             reclamacao:{
@@ -328,4 +322,4 @@ const CriarReclamacao: FC<ReclamacoesGeraisProps> = (props) => {
   );
 };
 
-export default CriarReclamacao;
+export default EditarReclamacao;

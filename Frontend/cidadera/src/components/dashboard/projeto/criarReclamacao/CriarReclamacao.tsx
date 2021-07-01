@@ -92,8 +92,6 @@ const CriarReclamacao: FC = () => {
         setSubmitting
       }): Promise<void> => {
         try {
-          console.log(values)
-
           setLoading(true)
           await axios.post('http://localhost:8080/reclamacao/nova', {
             titulo: values.titulo,

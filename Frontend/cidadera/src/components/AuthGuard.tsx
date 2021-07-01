@@ -13,7 +13,6 @@ const AuthGuard: FC<AuthGuardProps> = (props) => {
   const location = useLocation();
   const [requestedLocation, setRequestedLocation] = useState(null);
   const usuario = localStorage.getItem("usuario");
-  console.log(usuario)
   if (!usuario) {
     if (location.pathname !== requestedLocation) {
       setRequestedLocation(location.pathname);

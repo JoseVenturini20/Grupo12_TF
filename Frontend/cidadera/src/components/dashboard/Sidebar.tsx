@@ -26,30 +26,62 @@ const Sidebar: FC<DashboardSidebarProps> = (props) => {
   const { onMobileClose, openMobile } = props;
   const location = useLocation();
   const cargo = localStorage.getItem("cargo");
+  var sections = [];
 
-  const sections = [
-    {
-      title: 'Geral',
-      items: [
-        {
-          title: 'Inicio',
-          path: '/dashboard'
-        },
-        cargo === 'normal'
-        &&
-        {
-          title: 'Criar uma Reclamação',
-          path: '/dashboard/reclamacoes'
-        },
-        cargo === 'normal'
-        &&
-        {
-          title: 'Editar minhas Reclamações',
-          path: '/dashboard/editar-reclamacoes'
-        }
-      ]
-    }
-  ];
+  if(cargo === 'normal'){
+    sections.push(
+      {
+        title: 'Geral',
+        items: [
+          {
+            title: 'Inicio',
+            path: '/dashboard'
+          },
+          {
+            title: 'Criar uma Reclamação',
+            path: '/dashboard/reclamacoes'
+          },
+          {
+            title: 'Editar minhas Reclamações',
+            path: '/dashboard/editar-reclamacoes'
+          }
+        ]
+      }
+    )
+  }
+
+  if(cargo === 'administrador'){
+    sections.push(
+      {
+        title: 'Geral',
+        items: [
+          {
+            title: 'Inicio',
+            path: '/dashboard'
+          },
+          {
+            title: 'Informações Gerenciais',
+            path: '/dashboard/informacoes-gerenciais'
+          },
+        ]
+      }
+    )
+  }
+
+  if(cargo === 'oficial'){
+    sections.push(
+      {
+        title: 'Geral',
+        items: [
+          {
+            title: 'Inicio',
+            path: '/dashboard'
+          }
+        ]
+      }
+    )
+  }
+
   useEffect(() => {
     if (openMobile && onMobileClose) {
       onMobileClose();

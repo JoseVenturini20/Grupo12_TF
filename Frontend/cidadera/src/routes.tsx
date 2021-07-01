@@ -4,7 +4,6 @@ import AuthGuard from './components/AuthGuard';
 import Layout from './components/dashboard/Layout';
 import GuestGuard from './components/GuestGuard';
 
-
 const Loadable = (Component) => (props) => (
   <Suspense fallback={<div></div>}>
     <Component {...props} />
@@ -15,7 +14,7 @@ const Login = Loadable(lazy(() => import('./pages/authentication/Login')));
 const Inicio = Loadable(lazy(() => import('./pages/dashboard/Inicio')));
 const Reclamacoes = Loadable(lazy(() => import('./pages/reclamacao/Reclamacoes')));
 const MinhasReclamacoes = Loadable(lazy(() => import('./pages/reclamacao/MinhasReclamacoes')));
-
+const InformacoesGerenciais = Loadable(lazy(() => import('./pages/gerencia/InformacoesGerenciais')));
 const routes: PartialRouteObject[] = [
   {
     path: '/',
@@ -52,6 +51,10 @@ const routes: PartialRouteObject[] = [
       {
         path: '/editar-reclamacoes',
         element: <MinhasReclamacoes />
+      },
+      {
+        path: '/informacoes-gerenciais',
+        element: <InformacoesGerenciais />
       },
     ]
   }

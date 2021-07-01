@@ -30,7 +30,6 @@ const AdicionarComentarios: FC<AddComentario> = (props) => {
   }
 
   async function enviarComentario() {
-    console.log(value)
     await axios.put('http://localhost:8080/reclamacao/adicionarComentario', {
       id: id,
       comentario: {
